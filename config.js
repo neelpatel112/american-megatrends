@@ -1,0 +1,46 @@
+window.BIOS_CONFIG = {
+  cpu:          'Intel(R) Core(TM) i5-2400 CPU @ 3.10GHz',
+  cpuSpeed:     '3100MHz',
+  ramMB:        4096,
+  ramFrequency: '1333 MHz',
+  biosDate:     '04/25/11 09:12:53',
+  biosVer:      '08.00.15',
+  drives: {
+    priMaster: 'LBA, ATA 133, 500.1 GB',
+    priSlave:  'Not Detected',
+    secMaster: 'Not Detected',
+    secSlave:  'Not Detected',
+  },
+  bootOrder: ['SATA: ST3500418AS', 'USB: Not Detected', 'CD/DVD: Not Detected'],
+  timing: {
+    blackFlash:       400,
+    fanSpinDuration:  1800,
+    memCountDuration: 4400,
+    summaryHold:      7000,
+    handoffDelay:     600,
+  },
+  effects: {
+    crtBezel:         true,
+    barrelDistortion: true,
+    phosphorBurnIn:   true,
+    powerLED:         true,
+    crtFlicker:       true,
+    screenJitter:     true,
+    glitchLines:      true,
+  },
+  sounds: {
+    fanSpinUp:       true,
+    degauss:         true,
+    postBeep:        true,
+    typewriterSound: true,
+    hdSeekSound:     true,
+  },
+  easterEggs: {
+    failChance:   0.12,
+    virusChance:  0.25,
+    keyboardJoke: 0.20,
+    konamiUnlock: true,
+    doomUnlock:   true,
+  },
+};
+ 

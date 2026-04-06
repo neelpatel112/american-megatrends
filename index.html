@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>AMIBIOS Boot</title>
+  <link rel="stylesheet" href="bios.css"/>
+</head>
+<body>
+
+<div id="monitor-bezel">
+  <div id="power-led" class="led-off"></div>
+
+  <div id="screen-wrap">
+    <!-- Phosphor burn-in ghost -->
+    <div id="burnin-layer" aria-hidden="true"></div>
+
+    <!-- PHASE 0: Black -->
+    <div id="phase-black" class="phase active"></div>
+
+    <!-- PHASE 1: POST -->
+    <div id="phase-post" class="phase">
+      <div class="bios-screen">
+        <div class="top-bar">
+          <span class="tb-left">AMIBIOS(C)2011 American Megatrends, Inc.</span>
+          <span class="tb-right">BIOS Date: 04/25/11 09:12:53  Ver: 08.00.15</span>
+        </div>
+        <div id="cpu-line" class="cpu-line"></div>
+        <div class="mem-block">
+          <div id="mem-test-line" class="mem-test-line"></div>
+          <div id="mem-ok-line" class="mem-ok-line" style="display:none;">Memory OK</div>
+        </div>
+        <div id="post-lines" class="post-lines"></div>
+        <div class="bottom-bar">
+          <span>Auto-Detecting USB Mass Storage Devices..</span>
+          <span class="tb-right">DEL: Setup &nbsp; F8: Boot Menu</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 2: Summary -->
+    <div id="phase-summary" class="phase">
+      <div class="bios-screen">
+        <div class="top-bar">
+          <span class="tb-left">AMIBIOS(C)2011 American Megatrends, Inc.</span>
+          <span class="tb-right">BIOS Date: 04/25/11 09:12:53  Ver: 08.00.15</span>
+        </div>
+        <div class="summary-body">
+          <div class="ami-logo">
+<pre class="ami-art">
+    ___    __  ___ ____
+   /   |  /  |/  //  _/
+  / /| | / /|_/ / / /
+ / ___ |/ /  / /_/ /
+/_/  |_/_/  /_//___/
+</pre>
+            <div class="ami-tagline">American Megatrends Inc.,</div>
+            <div class="ami-tagline ami-ver">BIOS v08.00.15</div>
+          </div>
+          <div class="summary-table">
+            <div class="srow"><span class="slabel">CPU Type</span><span class="scolon">:</span><span id="sum-cpu" class="sval"></span></div>
+            <div class="srow"><span class="slabel">CPU Speed</span><span class="scolon">:</span><span id="sum-speed" class="sval"></span></div>
+            <div class="srow sspacer"></div>
+            <div class="srow"><span class="slabel">Floppy Drive A</span><span class="scolon">:</span><span class="sval">Not Detected</span></div>
+            <div class="srow"><span class="slabel">Pri. Master Disk</span><span class="scolon">:</span><span id="sum-pri-m" class="sval"></span></div>
+            <div class="srow"><span class="slabel">Pri. Slave Disk</span><span class="scolon">:</span><span id="sum-pri-s" class="sval"></span></div>
+            <div class="srow"><span class="slabel">Sec. Master Disk</span><span class="scolon">:</span><span id="sum-sec-m" class="sval"></span></div>
+            <div class="srow"><span class="slabel">Sec. Slave Disk</span><span class="scolon">:</span><span id="sum-sec-s" class="sval"></span></div>
+            <div class="srow sspacer"></div>
+            <div class="srow"><span class="slabel">Total Memory</span><span class="scolon">:</span><span id="sum-ram" class="sval"></span></div>
+            <div class="srow"><span class="slabel">Memory Frequency</span><span class="scolon">:</span><span id="sum-ramfreq" class="sval"></span></div>
+          </div>
+          <div class="boot-order-block">
+            <div class="bo-title">Boot Order:</div>
+            <div id="boot-order-list"></div>
+          </div>
+        </div>
+        <div class="bottom-bar sum-bottom">
+          <span>Press F1 to Run SETUP</span>
+          <span class="tb-right">Press F2 to Load Default Values and Continue</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 3: Handoff -->
+    <div id="phase-handoff" class="phase"></div>
+
+    <!-- ══════════════════════════════════════
+         PHASE 4: DOS SHELL  ← THE BIG NEW THING
+    ══════════════════════════════════════ -->
+    <div id="phase-dos" class="phase">
+      <div id="dos-screen">
+        <div id="dos-output"></div>
+        <div id="dos-input-row">
+          <span id="dos-prompt">C:\&gt;</span>
+          <span id="dos-input-text"></span><span class="dos-cursor">█</span>
+        </div>
+        <!-- Snake game canvas (hidden until SNAKE command) -->
+        <canvas id="snake-canvas" width="300" height="300" style="display:none;"></canvas>
+      </div>
+    </div>
+
+    <!-- Overlays -->
+    <div id="setup-overlay"    class="full-overlay" style="display:none;"></div>
+    <div id="bootmenu-overlay" class="full-overlay" style="display:none;"></div>
+    <div id="virus-overlay"    style="display:none;"></div>
+    <div id="doom-overlay"     style="display:none;"></div>
+  </div>
+
+  <div id="monitor-brand">SYNCMASTER 793S &nbsp;·&nbsp; DIGITAL</div>
+</div>
+
+<script src="config.js"></script>
+<script src="audio.js"></script>
+<script src="bios.js"></script>
+<script src="dos.js"></script>
+</body>
+</html>
+ 

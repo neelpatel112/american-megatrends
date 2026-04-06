@@ -100,10 +100,24 @@ let outputEl, inputTextEl, promptEl, snakeCanvas;
    BOOT SEQUENCE
 ════════════════════════════════════════════════════ */
 async function bootDOS() {
-  // Show DOS phase
-  document.querySelectorAll('.phase').forEach(p=>{p.classList.remove('active');p.style.display='none';});
+  // Hide ALL phases including phase-handoff which sits on top
+  document.querySelectorAll('.phase').forEach(p=>{
+    p.classList.remove('active');
+    p.style.display='none';
+    p.style.zIndex='';
+  });
+
+  // Also explicitly kill phase-handoff which can linger as black overlay
+  const handoff = document.getElementById('phase-handoff');
+  if(handoff){ handoff.style.display='none'; handoff.style.zIndex='-1'; }
+
   const phase = document.getElementById('phase-dos');
-  phase.style.display='block'; void phase.offsetWidth; phase.classList.add('active');
+  // phase-dos needs flex so dos-screen fills it correctly
+  phase.style.display='flex';
+  phase.style.flexDirection='column';
+  phase.style.zIndex='20';
+  void phase.offsetWidth;
+  phase.classList.add('active');
 
   outputEl     = document.getElementById('dos-output');
   inputTextEl  = document.getElementById('dos-input-text');

@@ -1,15 +1,14 @@
 /* ================================================================
-   bios.css — BIOS Boot Screen styles only
-   DOS Shell styles live in dos.css
+   bios.css — AMIBIOS POST screen, bezel, CRT effects
+   DOS / emulator styles → dos.css
 ================================================================ */
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
-/* ── Reset ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
-  width: 100%; height: 100%;
-  overflow: hidden; user-select: none;
+  width: 100%; height: 100%; overflow: hidden;
+  user-select: none;
   display: flex; align-items: center; justify-content: center;
   background: radial-gradient(ellipse at 50% 60%, #1a1a1a 0%, #060606 100%);
   font-family: 'Share Tech Mono', 'Courier New', monospace;
@@ -31,8 +30,7 @@ html, body {
   display: flex; flex-direction: column; align-items: center;
 }
 #monitor-bezel::before {
-  content: '';
-  position: absolute; inset: 18px 18px 38px;
+  content: ''; position: absolute; inset: 18px 18px 38px;
   border-radius: 8px;
   box-shadow: inset 0 0 18px rgba(0,0,0,.9), inset 0 0 4px rgba(0,0,0,.6);
   pointer-events: none; z-index: 1;
@@ -59,36 +57,32 @@ html, body {
   background: #000; border-radius: 6px; overflow: hidden;
 }
 #screen-wrap.barrel { filter: url(#barrel-filter); }
-
-/* CRT corner vignette */
 #screen-wrap::after {
-  content: ''; position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 999;
   background:
-    radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,.7) 100%),
-    radial-gradient(ellipse at 10% 10%, rgba(0,0,0,.4) 0%, transparent 40%),
-    radial-gradient(ellipse at 90% 10%, rgba(0,0,0,.4) 0%, transparent 40%),
-    radial-gradient(ellipse at 10% 90%, rgba(0,0,0,.4) 0%, transparent 40%),
-    radial-gradient(ellipse at 90% 90%, rgba(0,0,0,.4) 0%, transparent 40%);
-  pointer-events: none; z-index: 300;
+    radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.65) 100%),
+    radial-gradient(ellipse at 8% 8%,   rgba(0,0,0,.35) 0%, transparent 38%),
+    radial-gradient(ellipse at 92% 8%,  rgba(0,0,0,.35) 0%, transparent 38%),
+    radial-gradient(ellipse at 8% 92%,  rgba(0,0,0,.35) 0%, transparent 38%),
+    radial-gradient(ellipse at 92% 92%, rgba(0,0,0,.35) 0%, transparent 38%);
 }
 
-/* ── Burn-in ghost ───────────────────────────────────── */
+/* ── Phosphor burn-in ────────────────────────────────── */
 #burnin-layer {
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
   font-size: clamp(10px, 1.35vw, 14px); line-height: 1.52;
-  color: rgba(100,100,255,.07); padding: 5px 10px;
+  color: rgba(100,100,255,.06); padding: 5px 10px;
   white-space: pre; overflow: hidden;
 }
 
-/* ── BIOS Phases ─────────────────────────────────────── */
-/* These are positioned absolutely inside screen-wrap */
+/* ── BIOS phases ─────────────────────────────────────── */
 .phase {
   position: absolute; inset: 0;
   display: none; background: #000; z-index: 10;
 }
 .phase.active { display: block; }
 
-/* ── BIOS Screen ─────────────────────────────────────── */
+/* ── BIOS screen ─────────────────────────────────────── */
 .bios-screen {
   width: 100%; height: 100%;
   background: #000080; color: #c0c0c0;
@@ -96,37 +90,33 @@ html, body {
   padding: 5px 10px;
   display: flex; flex-direction: column;
   position: relative; overflow: hidden;
-  text-shadow: 0 0 2px rgba(192,192,192,.55);
-  animation: crt-on .32s ease-out forwards;
+  text-shadow: 0 0 2px rgba(192,192,192,.5);
+  animation: crt-on .3s ease-out forwards;
 }
-/* Scanlines */
 .bios-screen::before {
-  content: ''; position: absolute; inset: 0;
+  content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 200;
   background: repeating-linear-gradient(
-    to bottom, transparent 0, transparent 2px,
-    rgba(0,0,0,.1) 2px, rgba(0,0,0,.1) 4px
+    to bottom, transparent 0, transparent 2px, rgba(0,0,0,.1) 2px, rgba(0,0,0,.1) 4px
   );
-  pointer-events: none; z-index: 200;
 }
-/* CRT animations */
+
 @keyframes crt-on {
   from { filter: brightness(0); transform: scaleY(.015) scaleX(1.1); }
   55%  { transform: scaleY(1.006); }
   to   { filter: brightness(1); transform: scaleY(1) scaleX(1); }
 }
-.crt-off { animation: crt-off .24s ease-in forwards !important; }
+.crt-off { animation: crt-off .22s ease-in forwards !important; }
 @keyframes crt-off {
   from { filter: brightness(1); transform: scaleY(1); }
-  40%  { filter: brightness(2.5) contrast(4); transform: scaleY(.006) scaleX(1.14); }
+  40%  { filter: brightness(2.5) contrast(4); transform: scaleY(.005) scaleX(1.15); }
   to   { filter: brightness(0); transform: scaleY(0) scaleX(0); opacity: 0; }
 }
 .degauss-flash { animation: degauss .7s ease-out forwards !important; }
 @keyframes degauss {
   0%  { filter: brightness(1) saturate(1) hue-rotate(0deg); }
-  15% { filter: brightness(2) saturate(4) hue-rotate(90deg); transform: scale(1.02); }
+  15% { filter: brightness(2) saturate(4) hue-rotate(90deg);  transform: scale(1.02); }
   35% { filter: brightness(.8) saturate(3) hue-rotate(180deg); transform: scale(.99) skewX(2deg); }
   55% { filter: brightness(1.5) saturate(2) hue-rotate(270deg); transform: scale(1.01) skewX(-1deg); }
-  75% { filter: brightness(1) saturate(1.5) hue-rotate(30deg); transform: scale(1); }
   100%{ filter: brightness(1) saturate(1) hue-rotate(0deg); transform: scale(1); }
 }
 
@@ -141,7 +131,7 @@ html, body {
 .tb-left { color: #fff; }
 .tb-right { color: #ffff54; }
 
-/* ── CPU / Mem ───────────────────────────────────────── */
+/* ── CPU / Memory ────────────────────────────────────── */
 .cpu-line { color: #fff; margin-bottom: 5px; min-height: 1.5em; font-weight: bold; }
 .mem-block { margin-bottom: 7px; }
 .mem-test-line { color: #ffff54; min-height: 1.5em; }
@@ -172,7 +162,7 @@ html, body {
 }
 .sum-bottom { color: #ffff54; }
 
-/* ── Summary screen ──────────────────────────────────── */
+/* ── Summary ─────────────────────────────────────────── */
 .summary-body { flex: 1; display: flex; gap: 18px; padding: 8px 2px; overflow: hidden; }
 .ami-logo  { display: flex; flex-direction: column; min-width: 210px; flex-shrink: 0; }
 .ami-art   { color: #ffff54; font-size: clamp(8px,1vw,12px); line-height: 1.3; font-weight: bold; text-shadow: 0 0 8px rgba(255,255,84,.8); }
@@ -190,18 +180,17 @@ html, body {
 
 /* ── Glitch lines ────────────────────────────────────── */
 .glitch-line {
-  position: absolute; pointer-events: none;
-  z-index: 150; opacity: .85; white-space: nowrap;
-  font-size: .85em;
+  position: absolute; pointer-events: none; z-index: 150;
+  opacity: .85; white-space: nowrap; font-size: .85em;
 }
 
-/* ── Overlays base ───────────────────────────────────── */
+/* ── Full overlay base (setup / boot menus) ──────────── */
 .full-overlay {
   position: absolute; inset: 0; z-index: 500;
   display: flex; align-items: center; justify-content: center;
 }
 
-/* ── BIOS Setup ──────────────────────────────────────── */
+/* ── BIOS Setup box ──────────────────────────────────── */
 .setup-box {
   width: min(800px,96%); background: #000080;
   border: 2px solid #aaaaff; color: #c0c0c0;
@@ -212,82 +201,58 @@ html, body {
 }
 .setup-title { background: #aaaaaa; color: #000080; text-align: center; font-weight: bold; padding: 3px 0; letter-spacing: .1em; }
 .setup-tabs  { display: flex; background: #000080; border-bottom: 1px solid #aaaaff; }
-.stab { flex: 1; text-align: center; padding: 4px 0; color: #c0c0c0; border-right: 1px solid #5555aa; font-size: .92em; }
-.stab:last-child { border-right: none; }
-.stab.active { background: #aaaaaa; color: #000080; font-weight: bold; }
-.setup-content { display: flex; min-height: 220px; }
-.setup-items { flex: 1; padding: 8px 10px; border-right: 1px solid #5555aa; display: flex; flex-direction: column; gap: 2px; }
-.sitem { display: flex; justify-content: space-between; padding: 2px 5px; color: #c0c0c0; }
-.sitem.sel { background: #aaaaaa; color: #000080; font-weight: bold; }
-.sitem .sval { color: #ffff54; }
-.sitem.sel .sval { color: #000080; }
-.setup-helpbox { width: 200px; flex-shrink: 0; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
-.shelp-title { color: #ffff54; font-weight: bold; border-bottom: 1px solid #5555aa; padding-bottom: 4px; font-size: .88em; }
-.shelp-text  { color: #c0c0c0; font-size: .85em; line-height: 1.5; }
-.setup-footer { background: #000050; color: #55ff55; padding: 4px 10px; font-size: .82em; display: flex; gap: 16px; border-top: 1px solid #5555aa; flex-wrap: wrap; }
+.stab { flex:1; text-align:center; padding:4px 0; color:#c0c0c0; border-right:1px solid #5555aa; font-size:.92em; }
+.stab:last-child { border-right:none; }
+.stab.active { background:#aaaaaa; color:#000080; font-weight:bold; }
+.setup-content { display:flex; min-height:220px; }
+.setup-items { flex:1; padding:8px 10px; border-right:1px solid #5555aa; display:flex; flex-direction:column; gap:2px; }
+.sitem { display:flex; justify-content:space-between; padding:2px 5px; color:#c0c0c0; }
+.sitem.sel { background:#aaaaaa; color:#000080; font-weight:bold; }
+.sitem .sval { color:#ffff54; }
+.sitem.sel .sval { color:#000080; }
+.setup-helpbox { width:200px; flex-shrink:0; padding:8px 10px; display:flex; flex-direction:column; gap:6px; }
+.shelp-title { color:#ffff54; font-weight:bold; border-bottom:1px solid #5555aa; padding-bottom:4px; font-size:.88em; }
+.shelp-text  { color:#c0c0c0; font-size:.85em; line-height:1.5; }
+.setup-footer { background:#000050; color:#55ff55; padding:4px 10px; font-size:.82em; display:flex; gap:16px; border-top:1px solid #5555aa; flex-wrap:wrap; }
 
-/* ── Boot Menu ───────────────────────────────────────── */
-.bootmenu-box { background: #000080; border: 2px solid #aaaaff; min-width: 300px; box-shadow: 0 0 30px rgba(0,0,170,.85); font-size: clamp(10px,1.3vw,14px); }
-.bm-title  { background: #aaaaaa; color: #000080; text-align: center; font-weight: bold; padding: 4px 16px; }
-.bm-list   { padding: 8px 16px; display: flex; flex-direction: column; gap: 2px; }
-.bm-item   { color: #c0c0c0; padding: 3px 8px; }
-.bm-item.sel { background: #aaaaaa; color: #000080; font-weight: bold; }
-.bm-footer { background: #000050; color: #55ff55; padding: 4px 16px; font-size: .82em; border-top: 1px solid #5555aa; }
+.bootmenu-box { background:#000080; border:2px solid #aaaaff; min-width:300px; box-shadow:0 0 30px rgba(0,0,170,.85); font-size:clamp(10px,1.3vw,14px); }
+.bm-title  { background:#aaaaaa; color:#000080; text-align:center; font-weight:bold; padding:4px 16px; }
+.bm-list   { padding:8px 16px; display:flex; flex-direction:column; gap:2px; }
+.bm-item   { color:#c0c0c0; padding:3px 8px; }
+.bm-item.sel { background:#aaaaaa; color:#000080; font-weight:bold; }
+.bm-footer { background:#000050; color:#55ff55; padding:4px 16px; font-size:.82em; border-top:1px solid #5555aa; }
 
-/* ── Konami msg ──────────────────────────────────────── */
 .konami-msg {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  z-index: 9999; color: #ffff54; font-size: clamp(13px,1.8vw,20px);
-  font-weight: bold; text-align: center;
-  text-shadow: 0 0 12px rgba(255,255,84,.9);
-  background: #000080; border: 2px solid #ffff54; padding: 14px 24px;
-  animation: konami-flash 3.5s ease-in-out forwards; pointer-events: none;
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  z-index:9999; color:#ffff54; font-size:clamp(13px,1.8vw,20px); font-weight:bold;
+  text-align:center; text-shadow:0 0 12px rgba(255,255,84,.9);
+  background:#000080; border:2px solid #ffff54; padding:14px 24px;
+  animation:kf 3.5s ease-in-out forwards; pointer-events:none;
 }
-@keyframes konami-flash {
-  0%  { opacity:0; transform:translate(-50%,-50%) scale(.85); }
-  12% { opacity:1; transform:translate(-50%,-50%) scale(1); }
-  80% { opacity:1; }
-  100%{ opacity:0; transform:translate(-50%,-50%) scale(1.05); }
-}
+@keyframes kf { 0%{opacity:0;transform:translate(-50%,-50%) scale(.85);} 12%{opacity:1;transform:translate(-50%,-50%) scale(1);} 80%{opacity:1;} 100%{opacity:0;transform:translate(-50%,-50%) scale(1.05);} }
 
-/* ── Virus / prank overlays ──────────────────────────── */
-#virus-overlay {
-  position: absolute; inset: 0; z-index: 800;
-  background: #000; font-size: clamp(10px,1.3vw,13px);
-  color: #ff3333; padding: 14px;
-  overflow: hidden; display: flex; flex-direction: column; gap: 2px;
-}
-.virus-line           { animation: vfadein .05s ease-in; }
-.virus-line.red       { color: #ff3333; }
-.virus-line.yellow    { color: #ffff54; }
-.virus-line.white     { color: #fff; }
-.virus-line.green     { color: #55ff55; }
-.virus-line.blink     { animation: vfadein .05s ease-in, vblink .6s step-end infinite .5s; }
-@keyframes vfadein    { from{opacity:0;} to{opacity:1;} }
-@keyframes vblink     { 0%,100%{opacity:1;} 50%{opacity:0;} }
-.virus-red-tint       { animation: rtint .3s ease-in forwards; }
-@keyframes rtint      { from{filter:none;} to{filter:brightness(.9) sepia(.4) hue-rotate(-20deg) saturate(2);} }
+/* Virus prank */
+#virus-overlay { position:absolute;inset:0;z-index:800;background:#000;font-size:clamp(10px,1.3vw,13px);color:#ff3333;padding:14px;overflow:hidden;display:flex;flex-direction:column;gap:2px; }
+.virus-line { animation:vf .05s ease-in; }
+.virus-line.red    { color:#ff3333; }
+.virus-line.yellow { color:#ffff54; }
+.virus-line.white  { color:#fff; }
+.virus-line.green  { color:#55ff55; }
+.virus-line.blink  { animation:vf .05s ease-in, vblink .6s step-end infinite .5s; }
+@keyframes vf     { from{opacity:0;} to{opacity:1;} }
+@keyframes vblink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+.virus-red-tint { animation:rtint .3s ease-in forwards; }
+@keyframes rtint { from{filter:none;} to{filter:brightness(.9) sepia(.4) hue-rotate(-20deg) saturate(2);} }
 
-#doom-overlay {
-  position: absolute; inset: 0; z-index: 900; background: #000;
-  color: #ff6600; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 8px; text-align: center;
-}
-.doom-logo { font-size: clamp(28px,5vw,52px); font-weight: bold; color: #ff2200; text-shadow: 0 0 20px #ff2200, 0 0 40px #aa0000; letter-spacing: .2em; animation: dpulse 1s ease-in-out infinite alternate; }
+#doom-overlay { position:absolute;inset:0;z-index:900;background:#000;color:#ff6600;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center; }
+.doom-logo { font-size:clamp(28px,5vw,52px);font-weight:bold;color:#ff2200;text-shadow:0 0 20px #ff2200,0 0 40px #aa0000;letter-spacing:.2em;animation:dpulse 1s ease-in-out infinite alternate; }
 @keyframes dpulse { from{text-shadow:0 0 20px #ff2200,0 0 40px #aa0000;} to{text-shadow:0 0 35px #ff4400,0 0 70px #cc2200,0 0 100px #880000;} }
-.doom-sub  { color: #ff8844; font-size: clamp(10px,1.3vw,14px); letter-spacing: .1em; }
-.doom-bar  { width: 60%; height: 14px; border: 1px solid #ff4400; margin-top: 12px; }
-.doom-fill { height: 100%; background: linear-gradient(90deg,#880000,#ff2200); width: 0%; transition: width .05s linear; }
-.doom-pct  { color: #ff8844; font-size: .9em; margin-top: 4px; }
-
-.kbd-joke  {
-  position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
-  z-index: 700; color: #ffff54; text-align: center;
-  animation: kblink .9s step-end infinite; white-space: nowrap;
-  font-size: clamp(11px,1.4vw,15px);
-}
+.doom-sub { color:#ff8844;font-size:clamp(10px,1.3vw,14px);letter-spacing:.1em; }
+.doom-bar { width:60%;height:14px;border:1px solid #ff4400;margin-top:12px; }
+.doom-fill { height:100%;background:linear-gradient(90deg,#880000,#ff2200);width:0%;transition:width .05s linear; }
+.doom-pct { color:#ff8844;font-size:.9em;margin-top:4px; }
+.kbd-joke { position:absolute;bottom:30px;left:50%;transform:translateX(-50%);z-index:700;color:#ffff54;text-align:center;animation:kblink .9s step-end infinite;white-space:nowrap;font-size:clamp(11px,1.4vw,15px); }
 @keyframes kblink { 0%,100%{opacity:1;} 50%{opacity:0;} }
-
-.error-row { animation: epulse .6s ease-in-out; }
+.error-row { animation:epulse .6s ease-in-out; }
 @keyframes epulse { 0%,100%{opacity:1;} 50%{opacity:.3;} }
  

@@ -1,0 +1,168 @@
+/* ================================================================
+   dos.css  —  MS-DOS Shell styles
+   Loaded separately from bios.css
+================================================================ */
+
+/* ── DOS Phase container ─────────────────────────────── */
+/* NOT a .phase — positioned to fill screen-wrap fully,
+   hidden by default, shown by dos.js directly            */
+#phase-dos {
+  position: absolute;
+  inset: 0;
+  z-index: 50;          /* above all .phase elements (z-index:10) */
+  display: none;        /* dos.js sets display:flex when ready     */
+  flex-direction: column;
+  background: #000;
+  overflow: hidden;
+}
+
+/* ── DOS screen (fills phase-dos) ───────────────────── */
+#dos-screen {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #000;
+  color: #c0c0c0;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  font-size: clamp(10px, 1.3vw, 13.5px);
+  line-height: 1.55;
+  padding: 8px 12px 6px;
+  overflow: hidden;
+  /* green phosphor glow */
+  text-shadow: 0 0 3px rgba(170,255,170,.35);
+}
+
+/* CRT scanlines on DOS screen */
+#dos-screen::before {
+  content: ''; position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    to bottom, transparent 0, transparent 2px,
+    rgba(0,0,0,.09) 2px, rgba(0,0,0,.09) 4px
+  );
+  pointer-events: none; z-index: 100;
+}
+
+/* ── Output area ─────────────────────────────────────── */
+#dos-output {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  word-break: break-all;
+  padding-bottom: 2px;
+  /* hide scrollbar — looks cleaner */
+  scrollbar-width: none;
+}
+#dos-output::-webkit-scrollbar { display: none; }
+
+/* ── Input line ──────────────────────────────────────── */
+#dos-inputline {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding-top: 3px;
+  border-top: 1px solid #111;
+  color: #c0c0c0;
+  /* keep at very bottom */
+  position: relative;
+  z-index: 10;
+}
+
+#dos-prompt { color: #55ff55; flex-shrink: 0; }
+#dos-typed  { color: #ffffff; white-space: pre; }
+
+.dos-cursor {
+  display: inline-block;
+  color: #ffffff;
+  animation: dos-cur .7s step-end infinite;
+  margin-left: 1px;
+}
+@keyframes dos-cur { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+/* ── Output line colours ─────────────────────────────── */
+.dl           { display: block; color: #c0c0c0; }
+.dl.g         { color: #55ff55; }
+.dl.y         { color: #ffff54; }
+.dl.r         { color: #ff5555; }
+.dl.c         { color: #55ffff; }
+.dl.w         { color: #ffffff; font-weight: bold; }
+.dl.d         { color: #555555; }
+.dl.h         { color: #ffff54; font-weight: bold; border-bottom: 1px solid #333; margin-bottom: 2px; }
+.dl.err       { color: #ff5555; font-weight: bold; }
+
+/* ── Task bar (bottom status bar in DOS) ─────────────── */
+#dos-taskbar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 18px;
+  background: #aaaaaa;
+  color: #000080;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  font-size: clamp(8px, 1vw, 11px);
+  font-weight: bold;
+  letter-spacing: .05em;
+  flex-shrink: 0;
+  z-index: 20;
+}
+#dos-taskbar .tb-clock { color: #000080; }
+
+/* ── Snake canvas ────────────────────────────────────── */
+#snake-canvas {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  display: none;          /* shown by cmdSnake() */
+  border: 2px solid #55ff55;
+  box-shadow: 0 0 24px rgba(85,255,85,.5), 0 0 4px rgba(85,255,85,.8);
+  z-index: 200;
+  image-rendering: pixelated;
+  background: #000;
+}
+
+/* ── Matrix canvas (injected by cmdMatrix) ───────────── */
+#matrix-canvas {
+  position: absolute; inset: 0;
+  z-index: 180;
+  background: #000;
+  display: block;
+}
+
+/* ── Notification toast ──────────────────────────────── */
+.dos-toast {
+  position: absolute;
+  bottom: 24px; right: 12px;
+  background: #000080;
+  border: 1px solid #aaaaff;
+  color: #ffff54;
+  font-size: clamp(9px,1vw,12px);
+  padding: 5px 12px;
+  z-index: 300;
+  animation: toast-in .2s ease-out, toast-out .3s ease-in 2.5s forwards;
+  pointer-events: none;
+}
+@keyframes toast-in  { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:none;} }
+@keyframes toast-out { from{opacity:1;} to{opacity:0;} }
+
+/* ── Help table formatting ───────────────────────────── */
+.dos-help-row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 0 8px;
+  color: #c0c0c0;
+}
+.dos-help-row .cmd-name { color: #55ffff; }
+
+/* ── DIR listing ─────────────────────────────────────── */
+.dir-row {
+  display: grid;
+  grid-template-columns: 200px 100px 1fr;
+  gap: 0 4px;
+  color: #c0c0c0;
+}
+.dir-row.is-dir  { color: #55ffff; }
+.dir-row.is-hid  { color: #555; }
+ 

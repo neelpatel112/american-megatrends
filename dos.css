@@ -1,168 +1,164 @@
 /* ================================================================
-   dos.css  —  MS-DOS Shell styles
-   Loaded separately from bios.css
+   dos.css — v86 Emulator phase styles
 ================================================================ */
 
-/* ── DOS Phase container ─────────────────────────────── */
-/* NOT a .phase — positioned to fill screen-wrap fully,
-   hidden by default, shown by dos.js directly            */
-#phase-dos {
+/* ── Phase 4: Emulator container ────────────────────── */
+#phase-emulator {
   position: absolute;
   inset: 0;
-  z-index: 50;          /* above all .phase elements (z-index:10) */
-  display: none;        /* dos.js sets display:flex when ready     */
+  z-index: 50;          /* above all .phase (z:10) */
+  display: none;        /* shown by emulator.js */
   flex-direction: column;
   background: #000;
   overflow: hidden;
 }
 
-/* ── DOS screen (fills phase-dos) ───────────────────── */
-#dos-screen {
+/* ── Loading screen ──────────────────────────────────── */
+#emu-loading {
   position: absolute;
   inset: 0;
-  display: flex;
-  flex-direction: column;
+  z-index: 60;
   background: #000;
-  color: #c0c0c0;
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
-  font-size: clamp(10px, 1.3vw, 13.5px);
-  line-height: 1.55;
-  padding: 8px 12px 6px;
-  overflow: hidden;
-  /* green phosphor glow */
-  text-shadow: 0 0 3px rgba(170,255,170,.35);
-}
-
-/* CRT scanlines on DOS screen */
-#dos-screen::before {
-  content: ''; position: absolute; inset: 0;
-  background: repeating-linear-gradient(
-    to bottom, transparent 0, transparent 2px,
-    rgba(0,0,0,.09) 2px, rgba(0,0,0,.09) 4px
-  );
-  pointer-events: none; z-index: 100;
-}
-
-/* ── Output area ─────────────────────────────────────── */
-#dos-output {
-  flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
-  white-space: pre-wrap;
-  word-break: break-all;
-  padding-bottom: 2px;
-  /* hide scrollbar — looks cleaner */
-  scrollbar-width: none;
-}
-#dos-output::-webkit-scrollbar { display: none; }
-
-/* ── Input line ──────────────────────────────────────── */
-#dos-inputline {
   display: flex;
   align-items: center;
-  flex-shrink: 0;
-  padding-top: 3px;
-  border-top: 1px solid #111;
+  justify-content: center;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
   color: #c0c0c0;
-  /* keep at very bottom */
+}
+#emu-loading-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  padding: 20px;
+}
+.emu-load-title {
+  font-size: clamp(14px, 2vw, 22px);
+  color: #ffff54;
+  font-weight: bold;
+  text-shadow: 0 0 8px rgba(255,255,84,.6);
+  letter-spacing: .1em;
+}
+.emu-load-sub {
+  font-size: clamp(10px, 1.2vw, 13px);
+  color: #aaaaff;
+}
+.emu-progress-outer {
+  width: min(320px, 70vw);
+  height: 14px;
+  border: 1px solid #5555aa;
+  background: #000020;
   position: relative;
-  z-index: 10;
+  overflow: hidden;
+}
+.emu-progress-inner {
+  height: 100%;
+  background: linear-gradient(90deg, #0000aa, #5555ff, #aaaaff);
+  width: 0%;
+  transition: width .15s ease-out;
+}
+.emu-load-pct {
+  font-size: clamp(10px, 1.2vw, 13px);
+  color: #55ff55;
+}
+.emu-load-note {
+  font-size: clamp(8px, 1vw, 11px);
+  color: #555;
+  margin-top: 6px;
+  max-width: 320px;
 }
 
-#dos-prompt { color: #55ff55; flex-shrink: 0; }
-#dos-typed  { color: #ffffff; white-space: pre; }
-
-.dos-cursor {
-  display: inline-block;
-  color: #ffffff;
-  animation: dos-cur .7s step-end infinite;
-  margin-left: 1px;
+/* ── Emulator canvas container ───────────────────────── */
+#emulator-container {
+  position: absolute;
+  inset: 0 0 22px 0;   /* leave space for hints bar */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  overflow: hidden;
+  cursor: text;
 }
-@keyframes dos-cur { 0%,100%{opacity:1;} 50%{opacity:0;} }
 
-/* ── Output line colours ─────────────────────────────── */
-.dl           { display: block; color: #c0c0c0; }
-.dl.g         { color: #55ff55; }
-.dl.y         { color: #ffff54; }
-.dl.r         { color: #ff5555; }
-.dl.c         { color: #55ffff; }
-.dl.w         { color: #ffffff; font-weight: bold; }
-.dl.d         { color: #555555; }
-.dl.h         { color: #ffff54; font-weight: bold; border-bottom: 1px solid #333; margin-bottom: 2px; }
-.dl.err       { color: #ff5555; font-weight: bold; }
+/*
+  v86 injects a <canvas> element into #emulator-container.
+  We need it to fill the space while preserving the 4:3 aspect
+  ratio of the original VGA 80x25 text mode (640×400 px).
+*/
+#emulator-container canvas {
+  /* Fill height, let width be natural (4:3) */
+  max-height: 100%;
+  max-width: 100%;
+  /* Keep pixels sharp — no blur */
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  /* Override any v86 inline styles */
+  display: block !important;
+  /* CRT scanline effect over the real emulator output */
+  position: relative;
+  z-index: 2;
+}
 
-/* ── Task bar (bottom status bar in DOS) ─────────────── */
-#dos-taskbar {
+/* Scanlines overlay on top of canvas */
+#emulator-container::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px, transparent 2px,
+    rgba(0,0,0,0.12) 2px, rgba(0,0,0,0.12) 4px
+  );
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ── Hint / status bar ───────────────────────────────── */
+#emu-hints {
   position: absolute;
   bottom: 0; left: 0; right: 0;
-  height: 18px;
-  background: #aaaaaa;
-  color: #000080;
+  height: 22px;
+  background: #1a1a2e;
+  border-top: 1px solid #333;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0 8px;
-  font-size: clamp(8px, 1vw, 11px);
-  font-weight: bold;
-  letter-spacing: .05em;
-  flex-shrink: 0;
-  z-index: 20;
+  padding: 0 10px;
+  gap: 6px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(8px, .9vw, 11px);
+  color: #5555aa;
+  white-space: nowrap;
+  overflow: hidden;
+  z-index: 10;
 }
-#dos-taskbar .tb-clock { color: #000080; }
+.hint-sep { color: #333; }
+#emu-status {
+  margin-left: auto;
+  font-size: clamp(8px, .9vw, 11px);
+}
+.hint-status.ready  { color: #55ff55; }
+.hint-status.booting { color: #ffff54; }
+.hint-status.error  { color: #ff5555; }
 
-/* ── Snake canvas ────────────────────────────────────── */
-#snake-canvas {
+/* ── "Click to focus" overlay shown before first click ── */
+#emu-click-overlay {
   position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  display: none;          /* shown by cmdSnake() */
-  border: 2px solid #55ff55;
-  box-shadow: 0 0 24px rgba(85,255,85,.5), 0 0 4px rgba(85,255,85,.8);
-  z-index: 200;
-  image-rendering: pixelated;
-  background: #000;
-}
-
-/* ── Matrix canvas (injected by cmdMatrix) ───────────── */
-#matrix-canvas {
-  position: absolute; inset: 0;
-  z-index: 180;
-  background: #000;
-  display: block;
-}
-
-/* ── Notification toast ──────────────────────────────── */
-.dos-toast {
-  position: absolute;
-  bottom: 24px; right: 12px;
-  background: #000080;
-  border: 1px solid #aaaaff;
+  inset: 0 0 22px 0;
+  z-index: 55;
+  background: rgba(0,0,0,.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(12px, 1.6vw, 18px);
   color: #ffff54;
-  font-size: clamp(9px,1vw,12px);
-  padding: 5px 12px;
-  z-index: 300;
-  animation: toast-in .2s ease-out, toast-out .3s ease-in 2.5s forwards;
+  text-align: center;
+  letter-spacing: .05em;
+  transition: opacity .3s;
+}
+#emu-click-overlay.hidden {
+  opacity: 0;
   pointer-events: none;
 }
-@keyframes toast-in  { from{opacity:0;transform:translateY(10px);} to{opacity:1;transform:none;} }
-@keyframes toast-out { from{opacity:1;} to{opacity:0;} }
-
-/* ── Help table formatting ───────────────────────────── */
-.dos-help-row {
-  display: grid;
-  grid-template-columns: 130px 1fr;
-  gap: 0 8px;
-  color: #c0c0c0;
-}
-.dos-help-row .cmd-name { color: #55ffff; }
-
-/* ── DIR listing ─────────────────────────────────────── */
-.dir-row {
-  display: grid;
-  grid-template-columns: 200px 100px 1fr;
-  gap: 0 4px;
-  color: #c0c0c0;
-}
-.dir-row.is-dir  { color: #55ffff; }
-.dir-row.is-hid  { color: #555; }
  

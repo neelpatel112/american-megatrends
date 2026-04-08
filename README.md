@@ -2,7 +2,7 @@
 
 **A fully functional, browser-based MS-DOS 6.22 PC powered by the v86 emulator, wrapped in a nostalgic American Megatrends BIOS interface.**
 
-[Live Demo](https://american-megatrends.vercel.app/) | [Report Bug](https://github.com/YOUR_USERNAME/YOUR_REPO/issues) | [Request Feature](https://github.com/neelpatel112/YOUR_REPO/issues)
+[Live Demo](https://american-megatrends.vercel.app/) | [Report Bug](https://github.com/neelpatel112/american-megatrends) | [Request Feature](https://github.com/neelpatel112/american-megatrends)
 
 ---
 

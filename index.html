@@ -3,26 +3,34 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AMIBIOS Boot</title>
+  <title>AMIBIOS — MS-DOS 6.22</title>
   <link rel="stylesheet" href="bios.css"/>
   <link rel="stylesheet" href="dos.css"/>
+
+  <!--
+    v86 — x86 PC emulator in JavaScript
+    MIT License — https://github.com/copy/v86
+    Loaded from CDN (jsDelivr mirrors the official build)
+  -->
+  <script src="https://cdn.jsdelivr.net/gh/copy/v86@master/build/libv86.js"></script>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════
-     MONITOR SHELL
-═══════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════
+     CRT MONITOR BEZEL
+═══════════════════════════════════════════════════ -->
 <div id="monitor-bezel">
   <div id="power-led" class="led-off"></div>
 
   <div id="screen-wrap">
-
     <div id="burnin-layer" aria-hidden="true"></div>
 
-    <!-- PHASE 0 — black -->
-    <div id="phase-black"   class="phase active"></div>
+    <!-- ── BIOS PHASES (shown first, then hidden when v86 boots) ── -->
 
-    <!-- PHASE 1 — POST -->
+    <!-- Phase 0: black flash -->
+    <div id="phase-black" class="phase active"></div>
+
+    <!-- Phase 1: POST screen -->
     <div id="phase-post" class="phase">
       <div class="bios-screen">
         <div class="top-bar">
@@ -32,7 +40,7 @@
         <div id="cpu-line" class="cpu-line"></div>
         <div class="mem-block">
           <div id="mem-test-line" class="mem-test-line"></div>
-          <div id="mem-ok-line"   class="mem-ok-line" style="display:none;">Memory OK</div>
+          <div id="mem-ok-line" class="mem-ok-line" style="display:none;">Memory OK</div>
         </div>
         <div id="post-lines" class="post-lines"></div>
         <div class="bottom-bar">
@@ -42,7 +50,7 @@
       </div>
     </div>
 
-    <!-- PHASE 2 — Summary -->
+    <!-- Phase 2: AMI Summary -->
     <div id="phase-summary" class="phase">
       <div class="bios-screen">
         <div class="top-bar">
@@ -65,11 +73,9 @@
             <div class="srow"><span class="slabel">CPU Type</span><span class="scolon">:</span><span id="sum-cpu" class="sval"></span></div>
             <div class="srow"><span class="slabel">CPU Speed</span><span class="scolon">:</span><span id="sum-speed" class="sval"></span></div>
             <div class="srow sspacer"></div>
-            <div class="srow"><span class="slabel">Floppy Drive A</span><span class="scolon">:</span><span class="sval">Not Detected</span></div>
+            <div class="srow"><span class="slabel">Floppy Drive A</span><span class="scolon">:</span><span class="sval">1.44 MB</span></div>
             <div class="srow"><span class="slabel">Pri. Master Disk</span><span class="scolon">:</span><span id="sum-pri-m" class="sval"></span></div>
             <div class="srow"><span class="slabel">Pri. Slave Disk</span><span class="scolon">:</span><span id="sum-pri-s" class="sval"></span></div>
-            <div class="srow"><span class="slabel">Sec. Master Disk</span><span class="scolon">:</span><span id="sum-sec-m" class="sval"></span></div>
-            <div class="srow"><span class="slabel">Sec. Slave Disk</span><span class="scolon">:</span><span id="sum-sec-s" class="sval"></span></div>
             <div class="srow sspacer"></div>
             <div class="srow"><span class="slabel">Total Memory</span><span class="scolon">:</span><span id="sum-ram" class="sval"></span></div>
             <div class="srow"><span class="slabel">Memory Frequency</span><span class="scolon">:</span><span id="sum-ramfreq" class="sval"></span></div>
@@ -81,32 +87,59 @@
         </div>
         <div class="bottom-bar sum-bottom">
           <span>Press F1 to Run SETUP</span>
-          <span class="tb-right">Press F2 to Load Default Values and Continue</span>
+          <span class="tb-right">Press F2 to Load Defaults and Continue</span>
         </div>
       </div>
     </div>
 
-    <!-- PHASE 3 — handoff black -->
+    <!-- Phase 3: handoff black -->
     <div id="phase-handoff" class="phase"></div>
 
-    <!-- PHASE 4 — DOS Shell -->
-    <!-- NOT a .phase — managed entirely by dos.js so nothing can hide it accidentally -->
-    <div id="phase-dos">
-      <div id="dos-screen">
-        <div id="dos-output"></div>
-        <div id="dos-inputline">
-          <span id="dos-prompt">C:\&gt;&nbsp;</span><span id="dos-typed"></span><span class="dos-cursor">█</span>
+    <!-- ══════════════════════════════════════════════
+         PHASE 4: v86 EMULATOR SCREEN
+         The real MS-DOS 6.22 terminal lives here.
+         v86 renders into #emulator-container.
+    ══════════════════════════════════════════════ -->
+    <div id="phase-emulator">
+
+      <!-- Loading bar shown while disk image downloads -->
+      <div id="emu-loading">
+        <div id="emu-loading-inner">
+          <div class="emu-load-title">Loading MS-DOS 6.22</div>
+          <div class="emu-load-sub" id="emu-load-sub">Fetching boot disk image...</div>
+          <div class="emu-progress-outer">
+            <div class="emu-progress-inner" id="emu-progress"></div>
+          </div>
+          <div class="emu-load-pct" id="emu-load-pct">0%</div>
+          <div class="emu-load-note">
+            First load fetches ~2 MB disk image — cached after that.
+          </div>
         </div>
       </div>
-      <!-- Snake canvas lives inside dos, centered by CSS -->
-      <canvas id="snake-canvas" width="320" height="320"></canvas>
+
+      <!-- v86 renders a <canvas> here — we style it to fill the screen -->
+      <div id="emulator-container"></div>
+
+      <!-- Keyboard shortcut hints bar -->
+      <div id="emu-hints">
+        <span>Click screen to capture keyboard</span>
+        <span class="hint-sep">|</span>
+        <span>DEL → BIOS Setup</span>
+        <span class="hint-sep">|</span>
+        <span>F8 → Boot Menu</span>
+        <span class="hint-sep">|</span>
+        <span>Ctrl+Alt+Del → Reboot</span>
+        <span class="hint-sep">|</span>
+        <span id="emu-status" class="hint-status">Booting...</span>
+      </div>
     </div>
 
-    <!-- BIOS overlays (inside screen-wrap so bezel clips them) -->
+    <!-- BIOS UI Overlays (DEL / F8) -->
     <div id="setup-overlay"    class="full-overlay" style="display:none;"></div>
     <div id="bootmenu-overlay" class="full-overlay" style="display:none;"></div>
     <div id="virus-overlay"    style="display:none;"></div>
     <div id="doom-overlay"     style="display:none;"></div>
+
   </div><!-- /screen-wrap -->
 
   <div id="monitor-brand">SYNCMASTER 793S &nbsp;·&nbsp; DIGITAL</div>
@@ -115,7 +148,7 @@
 <script src="config.js"></script>
 <script src="audio.js"></script>
 <script src="bios.js"></script>
-<script src="dos.js"></script>
+<script src="emulator.js"></script>
 </body>
 </html>
  

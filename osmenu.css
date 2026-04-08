@@ -1,0 +1,369 @@
+/* ================================================================
+   osmenu.css — AMIBIOS Boot Device Selection Menu
+   Shown after BIOS POST completes, before any OS loads.
+================================================================ */
+
+/* ── Phase container ─────────────────────────────────── */
+#phase-osmenu {
+  position: absolute;
+  inset: 0;
+  z-index: 40;           /* between BIOS phases (10) and emulator (50) */
+  display: none;
+  flex-direction: column;
+  background: #0a0e1a;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  overflow: hidden;
+  animation: osm-fadein 0.25s ease-out forwards;
+}
+@keyframes osm-fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* CRT scanlines on the menu too */
+#phase-osmenu::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(
+    to bottom, transparent 0, transparent 2px,
+    rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px
+  );
+  pointer-events: none; z-index: 100;
+}
+
+/* ── Top title bar ───────────────────────────────────── */
+#osm-titlebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #1a3a8a;
+  border-bottom: 2px solid #4466cc;
+  padding: 10px 20px;
+  flex-shrink: 0;
+}
+#osm-title {
+  font-size: clamp(13px, 1.7vw, 19px);
+  color: #ffffff;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  text-shadow: 0 0 10px rgba(100,150,255,0.6);
+}
+#osm-version {
+  font-size: clamp(10px, 1.2vw, 13px);
+  color: #aabbdd;
+  letter-spacing: 0.08em;
+}
+
+/* ── Instruction row ─────────────────────────────────── */
+#osm-instructions {
+  padding: 12px 20px 8px;
+  flex-shrink: 0;
+}
+.osm-instr-line {
+  font-size: clamp(9px, 1.1vw, 12px);
+  color: #55aaff;
+  margin-bottom: 4px;
+  letter-spacing: 0.04em;
+}
+.osm-instr-line span { color: #77ccff; font-weight: bold; }
+
+/* ── Main layout ─────────────────────────────────────── */
+#osm-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0 20px 12px;
+  gap: 12px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ── Table header ────────────────────────────────────── */
+#osm-table-header {
+  display: grid;
+  grid-template-columns: 46px 1fr 1fr;
+  gap: 0 10px;
+  padding: 7px 14px;
+  background: #1a3a8a;
+  border: 1px solid #4466cc;
+  font-size: clamp(9px, 1.1vw, 12px);
+  color: #ffffff;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+/* ── OS entries list ─────────────────────────────────── */
+#osm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #2a3a5a;
+  flex-shrink: 0;
+}
+
+/* ── Single OS row ───────────────────────────────────── */
+.osm-row {
+  display: grid;
+  grid-template-columns: 46px 1fr 1fr;
+  gap: 0 10px;
+  align-items: center;
+  padding: 0;
+  border-bottom: 1px solid #1a2a3a;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.12s;
+  min-height: clamp(44px, 6vh, 60px);
+}
+.osm-row:last-child { border-bottom: none; }
+
+/* Default state */
+.osm-row .osm-id,
+.osm-row .osm-name,
+.osm-row .osm-type { padding: 10px 14px; }
+
+.osm-row .osm-id {
+  color: #aabbdd;
+  font-size: clamp(11px, 1.4vw, 15px);
+  font-weight: bold;
+  text-align: center;
+}
+.osm-row .osm-name {
+  color: #c8d8f0;
+  font-size: clamp(11px, 1.4vw, 15px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.osm-row .osm-name .os-label {
+  font-weight: bold;
+  letter-spacing: 0.03em;
+}
+.osm-row .osm-name .os-sublabel {
+  font-size: clamp(8px, 0.9vw, 10px);
+  color: #6688aa;
+  letter-spacing: 0.04em;
+}
+.osm-row .osm-type {
+  color: #6688aa;
+  font-size: clamp(9px, 1vw, 12px);
+  letter-spacing: 0.05em;
+}
+
+/* Available OS — normal hover */
+.osm-row.available {
+  background: #0d1826;
+}
+.osm-row.available:hover {
+  background: #162040;
+}
+.osm-row.available:hover .osm-id   { color: #ffffff; }
+.osm-row.available:hover .osm-name .os-label { color: #ffffff; }
+
+/* Selected / focused row */
+.osm-row.selected {
+  background: #1a3a8a !important;
+  outline: none;
+}
+.osm-row.selected .osm-id           { color: #ffffff; }
+.osm-row.selected .osm-name .os-label { color: #ffffff; }
+.osm-row.selected .osm-name .os-sublabel { color: #aabbdd; }
+.osm-row.selected .osm-type         { color: #aabbdd; }
+
+/* Selected indicator bar */
+.osm-row.selected::before {
+  content: '►';
+  position: absolute;
+  left: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #55aaff;
+  font-size: clamp(10px, 1.2vw, 13px);
+  animation: osm-blink 0.7s step-end infinite;
+}
+@keyframes osm-blink { 0%,100%{opacity:1;} 50%{opacity:0;} }
+
+/* Coming soon / locked OS */
+.osm-row.coming-soon {
+  background: #080e18;
+  cursor: default;
+  opacity: 0.65;
+}
+.osm-row.coming-soon:hover { background: #080e18; }
+.osm-row.coming-soon .osm-name .os-label { color: #445566; }
+.osm-row.coming-soon .osm-type  { color: #334455; }
+.osm-row.coming-soon .osm-id    { color: #334455; }
+
+/* Lock badge */
+.osm-lock {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #1a2030;
+  border: 1px solid #334455;
+  color: #556677;
+  font-size: clamp(7px, 0.85vw, 10px);
+  padding: 2px 6px;
+  border-radius: 2px;
+  margin-left: 8px;
+  letter-spacing: 0.06em;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* OS icon dots */
+.os-icon {
+  display: inline-block;
+  width: clamp(8px, 1vw, 11px);
+  height: clamp(8px, 1vw, 11px);
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+.os-icon.dos-icon     { background: #55ff55; box-shadow: 0 0 5px #55ff55; }
+.os-icon.win31-icon   { background: #4488ff; box-shadow: 0 0 5px #4488ff; }
+
+/* ── Bottom panels ───────────────────────────────────── */
+#osm-panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.osm-panel {
+  border: 1px solid #1e2e44;
+  background: #0a1020;
+  padding: 10px 14px;
+}
+.osm-panel-title {
+  font-size: clamp(9px, 1vw, 11px);
+  color: #55aaff;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border-bottom: 1px solid #1e2e44;
+  padding-bottom: 5px;
+  margin-bottom: 8px;
+}
+.osm-panel-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: clamp(8px, 0.95vw, 11px);
+  color: #7799bb;
+  margin-bottom: 4px;
+  gap: 8px;
+}
+.osm-panel-row .pv { color: #aabbcc; text-align: right; }
+
+/* ── Bottom footer bar ───────────────────────────────── */
+#osm-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: #1a3a8a;
+  border-top: 2px solid #4466cc;
+  padding: 7px 20px;
+  flex-shrink: 0;
+  font-size: clamp(8px, 1vw, 11px);
+  color: #aabbdd;
+  flex-wrap: wrap;
+}
+.osm-key {
+  display: inline-block;
+  background: #2244aa;
+  border: 1px solid #6688cc;
+  padding: 2px 7px;
+  border-radius: 2px;
+  color: #ffffff;
+  font-weight: bold;
+  margin-right: 3px;
+  font-size: clamp(8px, 0.95vw, 11px);
+}
+
+/* ── Boot confirmation overlay ───────────────────────── */
+#osm-confirm {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.osm-confirm-box {
+  background: #0d1826;
+  border: 2px solid #4466cc;
+  padding: 24px 32px;
+  text-align: center;
+  min-width: clamp(200px, 40vw, 360px);
+  box-shadow: 0 0 40px rgba(40,80,200,0.5);
+}
+.osm-confirm-title {
+  font-size: clamp(12px, 1.5vw, 17px);
+  color: #ffffff;
+  font-weight: bold;
+  margin-bottom: 8px;
+  letter-spacing: 0.08em;
+}
+.osm-confirm-sub {
+  font-size: clamp(9px, 1.1vw, 12px);
+  color: #7799bb;
+  margin-bottom: 18px;
+}
+.osm-confirm-bar {
+  width: 100%;
+  height: 4px;
+  background: #1a2a4a;
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+.osm-confirm-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2244cc, #55aaff);
+  width: 0%;
+  transition: width 0.05s linear;
+}
+.osm-confirm-pct {
+  font-size: clamp(8px, 1vw, 11px);
+  color: #55aaff;
+}
+
+/* Coming soon popup */
+#osm-soon-popup {
+  position: absolute;
+  inset: 0;
+  z-index: 200;
+  background: rgba(0,0,0,0.75);
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.osm-soon-box {
+  background: #0d1826;
+  border: 2px solid #336;
+  padding: 28px 36px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(30,60,180,0.4);
+  min-width: clamp(200px, 38vw, 340px);
+}
+.osm-soon-icon { font-size: clamp(24px, 3.5vw, 40px); margin-bottom: 10px; }
+.osm-soon-title { font-size: clamp(12px, 1.5vw, 17px); color: #4488ff; font-weight: bold; margin-bottom: 6px; letter-spacing: 0.06em; }
+.osm-soon-sub   { font-size: clamp(9px, 1.1vw, 12px); color: #6688aa; margin-bottom: 16px; }
+.osm-soon-btn {
+  display: inline-block;
+  background: #1a3a8a;
+  border: 1px solid #4466cc;
+  color: #aabbdd;
+  padding: 6px 20px;
+  font-family: inherit;
+  font-size: clamp(9px, 1.1vw, 12px);
+  cursor: pointer;
+  letter-spacing: 0.08em;
+  transition: background 0.15s;
+}
+.osm-soon-btn:hover { background: #2244aa; color: #ffffff; }
+ 

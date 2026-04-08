@@ -5,20 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AMIBIOS Boot</title>
   <link rel="stylesheet" href="bios.css"/>
+  <link rel="stylesheet" href="dos.css"/>
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════
+     MONITOR SHELL
+═══════════════════════════════════════ -->
 <div id="monitor-bezel">
   <div id="power-led" class="led-off"></div>
 
   <div id="screen-wrap">
-    <!-- Phosphor burn-in ghost -->
+
     <div id="burnin-layer" aria-hidden="true"></div>
 
-    <!-- PHASE 0: Black -->
-    <div id="phase-black" class="phase active"></div>
+    <!-- PHASE 0 — black -->
+    <div id="phase-black"   class="phase active"></div>
 
-    <!-- PHASE 1: POST -->
+    <!-- PHASE 1 — POST -->
     <div id="phase-post" class="phase">
       <div class="bios-screen">
         <div class="top-bar">
@@ -28,17 +32,17 @@
         <div id="cpu-line" class="cpu-line"></div>
         <div class="mem-block">
           <div id="mem-test-line" class="mem-test-line"></div>
-          <div id="mem-ok-line" class="mem-ok-line" style="display:none;">Memory OK</div>
+          <div id="mem-ok-line"   class="mem-ok-line" style="display:none;">Memory OK</div>
         </div>
         <div id="post-lines" class="post-lines"></div>
         <div class="bottom-bar">
           <span>Auto-Detecting USB Mass Storage Devices..</span>
-          <span class="tb-right">DEL: Setup &nbsp; F8: Boot Menu</span>
+          <span class="tb-right">DEL: Setup &nbsp;|&nbsp; F8: Boot Menu</span>
         </div>
       </div>
     </div>
 
-    <!-- PHASE 2: Summary -->
+    <!-- PHASE 2 — Summary -->
     <div id="phase-summary" class="phase">
       <div class="bios-screen">
         <div class="top-bar">
@@ -82,33 +86,31 @@
       </div>
     </div>
 
-    <!-- PHASE 3: Handoff -->
+    <!-- PHASE 3 — handoff black -->
     <div id="phase-handoff" class="phase"></div>
 
-    <!-- ══════════════════════════════════════
-         PHASE 4: DOS SHELL  ← THE BIG NEW THING
-    ══════════════════════════════════════ -->
-    <div id="phase-dos" class="phase">
+    <!-- PHASE 4 — DOS Shell -->
+    <!-- NOT a .phase — managed entirely by dos.js so nothing can hide it accidentally -->
+    <div id="phase-dos">
       <div id="dos-screen">
         <div id="dos-output"></div>
-        <div id="dos-input-row">
-          <span id="dos-prompt">C:\&gt;</span>
-          <span id="dos-input-text"></span><span class="dos-cursor">█</span>
+        <div id="dos-inputline">
+          <span id="dos-prompt">C:\&gt;&nbsp;</span><span id="dos-typed"></span><span class="dos-cursor">█</span>
         </div>
-        <!-- Snake game canvas (hidden until SNAKE command) -->
-        <canvas id="snake-canvas" width="300" height="300" style="display:none;"></canvas>
       </div>
+      <!-- Snake canvas lives inside dos, centered by CSS -->
+      <canvas id="snake-canvas" width="320" height="320"></canvas>
     </div>
 
-    <!-- Overlays -->
+    <!-- BIOS overlays (inside screen-wrap so bezel clips them) -->
     <div id="setup-overlay"    class="full-overlay" style="display:none;"></div>
     <div id="bootmenu-overlay" class="full-overlay" style="display:none;"></div>
     <div id="virus-overlay"    style="display:none;"></div>
     <div id="doom-overlay"     style="display:none;"></div>
-  </div>
+  </div><!-- /screen-wrap -->
 
   <div id="monitor-brand">SYNCMASTER 793S &nbsp;·&nbsp; DIGITAL</div>
-</div>
+</div><!-- /monitor-bezel -->
 
 <script src="config.js"></script>
 <script src="audio.js"></script>

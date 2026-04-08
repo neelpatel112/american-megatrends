@@ -348,10 +348,12 @@
   };
 
   /* ══════════════════════════════════════════════════
-     MAIN ENTRY — triggered by bios:complete
+     MAIN ENTRY — triggered by OS menu selection
+     osmenu.js fires 'os:selected' with { id: 'dos' }
   ══════════════════════════════════════════════════ */
-  window.addEventListener('bios:complete', function() {
-    setTimeout(function() { initEmulator(); }, 350);
+  window.addEventListener('os:selected', function(e) {
+    if (!e.detail || e.detail.id !== 'dos') return;
+    setTimeout(function() { initEmulator(); }, 200);
   });
 
   async function initEmulator() {

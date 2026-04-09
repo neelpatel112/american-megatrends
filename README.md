@@ -3,11 +3,15 @@
 **A fully functional, browser-based windows 3.1 & MS-DOS 6.22 PC powered by the v86 emulator, wrapped in a nostalgic American Megatrends BIOS interface.**
 
 [Live Demo](https://american-megatrends.vercel.app/) | [Report Bug](https://github.com/neelpatel112/american-megatrends) | [Request Feature](https://github.com/neelpatel112/american-megatrends)
-
+---
+![bios startup screen](boot/bios.jpg)
+---
 ---
 ![windows startup screen](boot/windows.jpg)
 ---
-
+---
+![os selection menu](boot/osmenu.jpg)
+---
 ## ✨ Features
 
 - **Authentic BIOS Boot Screen** – Classic AMI BIOS POST display with hardware detection

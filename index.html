@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="bios.css"/>
   <link rel="stylesheet" href="dos.css"/>
   <link rel="stylesheet" href="osmenu.css"/>
+  <link rel="stylesheet" href="OS/windows/win31.css"/>
 
   <!--
     v86 — x86 PC emulator in JavaScript
@@ -103,6 +104,13 @@
     <div id="phase-osmenu"></div>
 
     <!-- ══════════════════════════════════════════════
+         PHASE 5: WINDOWS 3.1
+         Splash screen → startup sound → desktop
+         All managed by OS/windows/win31.js
+    ══════════════════════════════════════════════ -->
+    <div id="phase-win31"></div>
+
+    <!-- ══════════════════════════════════════════════
          PHASE 4: v86 EMULATOR SCREEN
          The real MS-DOS 6.22 terminal lives here.
          v86 renders into #emulator-container.
@@ -157,6 +165,8 @@
 <script src="bios.js"></script>
 <script src="osmenu.js"></script>
 <script src="emulator.js"></script>
+<script src="OS/windows/win31.js"></script>
+<script src="OS/windows/win31-apps.js"></script>
 </body>
 </html>
  

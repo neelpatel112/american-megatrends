@@ -5,7 +5,7 @@
 [Live Demo](https://american-megatrends.vercel.app/) | [Report Bug](https://github.com/neelpatel112/american-megatrends) | [Request Feature](https://github.com/neelpatel112/american-megatrends)
 
 ---
-windows.jpg
+![windows startup screen](boot/windows.jpg)
 ---
 
 ## ✨ Features

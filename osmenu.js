@@ -34,8 +34,8 @@
       sublabel:  'Windows — 1992',
       type:      'Hard Disk (C:)  —  IDE 504 MB',
       icon:      'win31-icon',
-      available: false,
-      comingSoon: true,
+      available: true,
+      comingSoon: false,
     },
   ];
 

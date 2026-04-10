@@ -1,4 +1,4 @@
-#AMIBIOS – Retro windows 3.2 & DOS 6.22 Machine in Your Browser
+# AMIBIOS – Retro windows 3.2 & DOS 6.22 Machine in Your Browser
 
 **A fully functional, browser-based windows 3.1 & MS-DOS 6.22 PC powered by the v86 emulator, wrapped in a nostalgic American Megatrends BIOS interface.**
 
